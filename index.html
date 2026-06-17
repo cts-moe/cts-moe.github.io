@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>CTS-MoE</title>
+<meta name="description" content="CTS-MoE: a perceptive multi-task RL framework combining a dense mixture-of-experts actor with a sparse multi-critic in a concurrent teacher-student paradigm for legged locomotion over discontinuous terrain." />
+<meta property="og:title" content="CTS-MoE: Implicit Policy Adaptation Enables Perceptive Locomotion on Discontinuous Terrain" />
+<meta property="og:description" content="A dense mixture-of-experts actor with a sparse multi-critic, trained end-to-end in a concurrent teacher-student paradigm, enabling implicit terrain adaptation on a Unitree Go1." />
+<meta property="og:type" content="website" />
+<meta property="og:image" content="assets/img/fig1_main_image.png" />
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<div class="main-content">
+
+  <!-- ===== HERO ===== -->
+  <header class="hero">
+    <h1 class="hero-text">CTS-MoE: Implicit Terrain Adaptation via <br>Mixture-of-Experts for Perceptive Locomotion</h1>
+
+    <div class="authors">
+      <div class="names">
+        <a href="https://faffonso.github.io/">Francisco Affonso</a><sup>1</sup>,
+        <a href="https://mpangarola.github.io/">Matheus P. Angarola</a><sup>2</sup>,
+        Ana Luiza Mineiro<sup>2</sup>,
+        <a href="https://adipotnis.github.io/">Aditya Potnis</a><sup>1</sup>,
+        Marcelo Becker<sup>2</sup>,
+        Girish Chowdhary<sup>1</sup>
+      </div>
+      <span class="affiliation"><sup>1</sup> University of Illinois Urbana&#8209;Champaign &nbsp;&middot;&nbsp; <sup>2</sup> University of S&atilde;o Paulo</span>
+      <span class="author-note">Corresponding author: <a href="mailto:faffonso@illinois.edu">faffonso@illinois.edu</a></span>
+    </div>
+
+    <div class="quick-links">
+      <a href="https://arxiv.org/pdf/XXXX.XXXXX" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Paper</a>
+      <a href="https://arxiv.org/abs/XXXX.XXXXX" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>arXiv</a>
+      <span class="soon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>Summary Video (soon)</span>
+      <span class="soon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>Code (soon)</span>
+    </div>
+
+    <figure class="teaser">
+      <img src="assets/img/fig1_main_image.png" alt="Real-world deployment of CTS-MoE on a Unitree Go1 across stairs, obstacles, slopes, and uneven ground." />
+    </figure>
+  </header>
+
+  <div class="page-content">
+
+    <!-- ===== ABSTRACT ===== -->
+    <span class="section-subtitle">Abstract</span>
+    <div class="section">
+      <p>Perceptive legged locomotion over discontinuous terrain (e.g., stairs, gaps, and obstacles) requires adaptive behavior, as a single conservative gait cannot produce the anticipatory maneuvers needed for abrupt topology changes. Cast as <b>multi-task reinforcement learning</b>, this problem introduces a tension between <b>sharing and separation</b>. Tasks use a common locomotion base but have conflicting rewards, so a policy must share behavior while avoiding value interference. Prior work addresses only one side, with monolithic policies sacrificing specialization and hierarchical sub-policies sacrificing generalization across transitions and unseen terrain. We propose <b>CTS-MoE</b>, which combines a dense <b>mixture-of-experts</b> actor with perception-based gating to compose shared behaviors and a <b>multi-critic</b> with task-specific value heads to prevent interference. The model is trained end-to-end in a single-stage concurrent teacher-student setup that handles partial observability and avoids sequential distillation, with task labels used only during training. At deployment, routing depends solely on perception, allowing <b>implicit terrain adaptationwithout a high-level selector or terrain classifier.</b>  Experiments on a Unitree Go1 in simulation and on hardware across seen and unseen terrains show task-aware specialization, with lower tracking error and higher success rates than monolithic baselines.</p>
+    </div>
+
+    <!-- ===== METHOD ===== -->
+    <span class="section-subtitle">Method</span>
+
+    <figure>
+      <img class="diagram" src="assets/img/fig2_main_diagram.png" alt="CTS-MoE architecture: teacher and student encoders, MoE actor with router, and multi-critic." />
+      <p class="figure-caption"><b>Overview of CTS-MoE.</b> A <b>single-stage</b> framework that <b>jointly trains</b> the privileged <b>teacher</b> and the deployable <b>student</b>, extending CTS<sup>&dagger;</sup> to the perceptive MTRL setting. After each update a supervised <b>distillation</b> aligns the student latent to the teacher's, removing the mismatch of sequential distillation. Both branches feed one policy trained with a multi-reward formulation (a task-specific reward per terrain), realized by a <b>dense mixture-of-experts actor</b>, whose perception-conditioned router soft-weights and composes expert actions, and a <b>sparse multi-critic</b> that isolates per-task value signals to stabilize PPO. Routing on perception rather than task labels makes terrain adaptation implicit, with no high-level selector or terrain classification at deployment.<span class="note">&dagger; CTS: <a href="https://arxiv.org/abs/2405.10830" target="_blank" rel="noopener">Concurrent Teacher-Student Reinforcement Learning for Legged Locomotion</a> (Wang et al., 2024).</span></p>
+    </figure>
+
+    <span class="mini-label">Contributions</span>
+    <ol class="contributions">
+      <li>A concurrent teacher-student framework that extends asymmetric distillation to the perceptive MTRL setting, jointly training the representation and expert policies.</li>
+      <li>A dual MoE design, a sparse multi-critic for per-task value isolation and a dense MoE actor for shared specialization, that resolves task gradient interference.</li>
+      <li>A demonstration that perception-conditioned routing enables implicit policy adaptation, yielding task-aware specialization without explicit task labels.</li>
+    </ol>
+
+    <!-- ===== VIDEOS ===== -->
+    <span class="section-subtitle">Real-world</span>
+    <!-- Real-world clips are landscape. Drop more into assets/video/real/ and add a tile. -->
+    <div class="video-grid">
+      <div class="gallery-item">
+        <video autoplay muted loop playsinline preload="auto" disablepictureinpicture poster="assets/img/poster/real_descend.png?v=3"><source src="assets/video/real/descend.mp4?v=3" type="video/mp4" /></video>
+        <div class="gcap">Descend</div>
+      </div>
+      <div class="gallery-item">
+        <video autoplay muted loop playsinline preload="auto" disablepictureinpicture poster="assets/img/poster/real_climb_up.png?v=3"><source src="assets/video/real/climb_up.mp4?v=3" type="video/mp4" /></video>
+        <div class="gcap">Climb-Up</div>
+      </div>
+      <div class="gallery-item">
+        <video autoplay muted loop playsinline preload="auto" disablepictureinpicture poster="assets/img/poster/real_climb_down.png?v=3"><source src="assets/video/real/climb_down.mp4?v=3" type="video/mp4" /></video>
+        <div class="gcap">Climb-Down</div>
+      </div>
+      <div class="gallery-item">
+        <video autoplay muted loop playsinline preload="auto" disablepictureinpicture poster="assets/img/poster/real_slope.png?v=3"><source src="assets/video/real/slope.mp4?v=3" type="video/mp4" /></video>
+        <div class="gcap">Slope &middot; unseen</div>
+      </div>
+      <div class="gallery-item">
+        <video autoplay muted loop playsinline preload="auto" disablepictureinpicture poster="assets/img/poster/real_long_track.png?v=4"><source src="assets/video/real/long_track.mp4?v=4" type="video/mp4" /></video>
+        <div class="gcap">Long-track &middot; transitions</div>
+      </div>
+    </div>
+
+    <span class="section-subtitle" id="videos">Simulation</span>
+
+    <div class="video-grid">
+      <div class="gallery-item">
+        <video autoplay muted loop playsinline preload="auto" disablepictureinpicture poster="assets/img/poster/sim_ascend.png?v=2"><source src="assets/video/sim/ascend.mp4?v=2" type="video/mp4" /></video>
+        <div class="gcap">Ascend</div>
+      </div>
+      <div class="gallery-item">
+        <video autoplay muted loop playsinline preload="auto" disablepictureinpicture poster="assets/img/poster/sim_descend.png?v=2"><source src="assets/video/sim/descend.mp4?v=2" type="video/mp4" /></video>
+        <div class="gcap">Descend</div>
+      </div>
+      <div class="gallery-item">
+        <video autoplay muted loop playsinline preload="auto" disablepictureinpicture poster="assets/img/poster/sim_climb_up.png?v=2"><source src="assets/video/sim/climb_up.mp4?v=2" type="video/mp4" /></video>
+        <div class="gcap">Climb-Up</div>
+      </div>
+      <div class="gallery-item">
+        <video autoplay muted loop playsinline preload="auto" disablepictureinpicture poster="assets/img/poster/sim_climb_down.png?v=2"><source src="assets/video/sim/climb_down.mp4?v=2" type="video/mp4" /></video>
+        <div class="gcap">Climb-Down</div>
+      </div>
+      <div class="gallery-item">
+        <video autoplay muted loop playsinline preload="auto" disablepictureinpicture poster="assets/img/poster/sim_cross_gap.png?v=2"><source src="assets/video/sim/cross_gap.mp4?v=2" type="video/mp4" /></video>
+        <div class="gcap">Cross-Gap</div>
+      </div>
+    </div>
+
+
+    <!-- ===== SIMULATION RESULTS ===== -->
+    <span class="section-subtitle">Simulation Results</span>
+    <div class="section">
+      <p>CTS-MoE outperforms the perceptive baselines, with the largest gains on terrains that demand anticipatory behavior &mdash; success rate increases by <b>+29.3%</b> on gaps and <b>+10.3%</b> on climb-up over the prior perceptive baseline. The MoE actor yields <i>no</i> improvement for the blind baseline, confirming that the gains come from the multi-task formulation enabling perception-conditioned specialization, not from representation learning alone.</p>
+    </div>
+
+    <span class="mini-label">Success rate over terrain (%)</span>
+    <div class="tbl-scroll">
+      <table class="data">
+        <thead>
+          <tr>
+            <th>Terrain</th>
+            <th class="col-ours">CTS-MoE<br><span class="hsub">Ours</span></th>
+            <th>Ego-Vision<br><span class="hsub">Agarwal et al. (2023)</span></th>
+            <th>MoE-Loco<br><span class="hsub">Huang et al. (2025)</span></th>
+            <th>CTS<br><span class="hsub">Wang et al. (2024)</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Flat</td><td class="best col-ours">100.0</td><td class="best">100.0</td><td class="best">100.0</td><td>99.7</td></tr>
+          <tr><td>Ascend</td><td class="best col-ours">97.0</td><td>93.3</td><td>71.3</td><td>85.0</td></tr>
+          <tr><td>Descend</td><td class="best col-ours">100.0</td><td class="best">100.0</td><td>99.7</td><td class="best">100.0</td></tr>
+          <tr><td>Gaps</td><td class="best col-ours">98.3</td><td>69.0</td><td>40.0</td><td>40.3</td></tr>
+          <tr><td>Climb-Up</td><td class="best col-ours">87.0</td><td>76.7</td><td>63.3</td><td>78.0</td></tr>
+          <tr><td>Climb-Down</td><td class="best col-ours">99.7</td><td>96.3</td><td>96.0</td><td>98.0</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="tbl-note">Baselines are <b>adapted versions</b> of prior methods, each re-implemented within our pipeline with the MTRL structure to provide a fair comparison.</p>
+
+    <span class="mini-label">Expert specialization</span>
+    <div class="section">
+      <p>The MoE actor achieves task-aware specialization, individual experts capture complementary, terrain-specific control strategies and the framework composes them implicitly without relying on explicit task identification. Moreover, since all experts optimize the same global objective of velocity tracking, their behaviors diverge only subtly across terrains, resulting in gradual changes that reflect implicit adaptation rather than sparse switching.</p>
+    </div>
+    <div class="grid2 figs-pair">
+      <figure>
+        <img class="diagram" src="assets/img/fig3a_expert_signature.png" alt="Expert usage patterns across terrain tasks." />
+        <p class="figure-caption"><b>Expert usage patterns</b> across the different terrain tasks.</p>
+      </figure>
+      <figure>
+        <img class="diagram" src="assets/img/fig3b_cosine.png" alt="Pairwise cosine similarity between expert action outputs." />
+        <p class="figure-caption"><b>Pairwise cosine similarity</b> between the experts' output actions.</p>
+      </figure>
+    </div>
+    <figure>
+      <img class="diagram" src="assets/img/fig4_long_track.png" alt="Per-expert router weights along the long evaluation course." />
+      <p class="figure-caption"><b>Temporal evolution of expert usage</b> along a long course mixing seen and unseen terrain. Expert selection varies smoothly with terrain and time &mdash; no discrete switching as in hierarchical approaches.</p>
+    </figure>
+
+    <!-- ===== BIBTEX ===== -->
+    <span class="section-subtitle">BibTeX</span>
+    <div class="bibtex-code">
+      <div class="bibtex-head">
+        <p class="bibtex-title">Cite this work</p>
+        <button class="copy-btn" id="copyBib">Copy</button>
+      </div>
+<pre><code id="bibText">@misc{
+}</code></pre>
+    </div>
+
+  </div><!-- /page-content -->
+</div><!-- /main-content -->
+
+<footer class="footer">
+  Some website materials are adapted from
+  <a href="https://www.videomimic.net/" target="_blank" rel="noopener">VideoMimic</a>,
+  <a href="https://transic-robot.github.io/" target="_blank" rel="noopener">TRANSIC</a>, and
+  <a href="https://sumo.rai-inst.com/" target="_blank" rel="noopener">Sumo</a>.
+</footer>
+
+<script>
+  document.getElementById('copyBib').addEventListener('click', function () {
+    var txt = document.getElementById('bibText').innerText;
+    navigator.clipboard.writeText(txt).then(function () {
+      var b = document.getElementById('copyBib');
+      b.textContent = 'Copied!';
+      setTimeout(function () { b.textContent = 'Copy'; }, 1600);
+    });
+  });
+</script>
+</body>
+</html>

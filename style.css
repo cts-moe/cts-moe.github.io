@@ -1,0 +1,188 @@
+/* ============================================================
+   CTS-MoE project page — typography & layout matched to
+   https://sumo.rai-inst.com/  (Playfair Display + Roboto Mono,
+   cream background, black-tag section titles)
+   ============================================================ */
+/* core-moe (Nerfies) font system: Google Sans titles + Noto Sans body */
+@import url('https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro');
+
+html, body { margin: 0; padding: 0; width: 100%; overflow-x: hidden; }
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  background: #fdfaf4;
+  color: #1b1b1b;
+  font-family: 'Google Sans', 'Noto Sans', sans-serif;
+}
+
+img { max-width: 100%; }
+a { color: inherit; }
+
+.main-content { max-width: 1340px; margin: 0 auto; }
+.page-content { padding: 26px 30px 30px; }
+
+/* ---------- HERO ---------- */
+.hero { text-align: center; padding: 34px 20px 0; }
+.hero-text {
+  font-family: 'Google Sans', 'Noto Sans', sans-serif;
+  font-size: 46px; font-weight: 700; letter-spacing: -.5px; line-height: 1.18;
+  margin: 0 auto 18px; max-width: 1180px;
+}
+.hero-text .kw { font-style: italic; }
+.sub-hero-text {
+  font-size: 26px; font-weight: 400; line-height: 1.5; max-width: 62ch;
+  margin: 0 auto 30px; color: #2c2c2c;
+}
+
+/* AUTHORS */
+.authors {
+  font-family: 'Google Sans', 'Noto Sans', sans-serif; font-size: 19px; color: #333;
+  line-height: 1.85; text-align: center; margin: 12px 0 6px;
+}
+.authors .names { font-size: 21px; }
+.authors sup { color: #1b1b1b; font-weight: 700; }
+.authors a { color: inherit; text-decoration: none; border-bottom: 1px solid transparent; }
+.authors a:hover { border-color: #1b1b1b; }
+.authors .affiliation { display: block; font-weight: 600; font-size: 18px; color: #111; margin-top: 6px; }
+.authors .author-note { display: block; font-size: 16px; color: #555; margin-top: 10px; }
+
+/* QUICK LINKS */
+.quick-links {
+  display: flex; flex-wrap: wrap; justify-content: center; gap: 14px; margin: 16px 0 8px;
+}
+.quick-links a, .quick-links span {
+  font-family: 'Google Sans', 'Noto Sans', sans-serif; font-size: 17px; font-weight: 700;
+  color: #1b1b1b; text-decoration: none; display: inline-flex; align-items: center;
+  border: 1.5px solid #1b1b1b; border-radius: 999px; padding: 9px 20px;
+  transition: background .2s ease, color .2s ease, border-color .2s ease, transform .2s ease;
+}
+.quick-links a:hover { background: #1b1b1b; color: #fdfaf4; text-decoration: none; transform: translateY(-2px); }
+.quick-links .soon { color: #a8a293; border-color: #ddd6c4; cursor: default; }
+.quick-links svg { width: 17px; height: 17px; vertical-align: -2px; margin-right: 8px; }
+
+/* ---------- SECTION LABELS (black tag) ---------- */
+.section-subtitle {
+  font-family: 'Google Sans', 'Noto Sans', sans-serif; font-size: 24px; letter-spacing: .01em;
+  background: #000; color: #fff; display: inline-block; padding: 7px 17px; margin: 62px 0 24px; scroll-margin-top: 24px;
+}
+.page-content > .section-subtitle:first-child { margin-top: 0; }
+.mini-label {
+  font-family: 'Google Sans', 'Noto Sans', sans-serif; font-size: 16px; font-weight: 700;
+  letter-spacing: .06em; text-transform: uppercase; color: #1b1b1b;
+  border-bottom: 2px solid #1b1b1b; display: inline-block; padding-bottom: 3px;
+  margin: 34px 0 16px;
+}
+
+/* ---------- PROSE ---------- */
+.section {
+  font-family: 'Google Sans', 'Noto Sans', sans-serif;
+  font-size: 20px; line-height: 1.8;
+  margin: 0 0 18px;
+}
+.section.abstract { font-size: 20px; line-height: 1.8; }
+.section p { margin: 0 0 18px; }
+.section b { font-weight: 600; }
+
+/* ---------- IMAGES / FIGURES ---------- */
+figure { margin: 26px 0 8px; }
+figure img {
+  width: 100%; border-radius: 15px; box-shadow: 0 4px 14px rgba(0,0,0,.13);
+  background: #fff; display: block;
+}
+figure img.diagram { padding: 16px; }
+.figure-caption {
+  font-family: 'Google Sans', 'Noto Sans', sans-serif; font-size: 16px; color: #555;
+  text-align: left; line-height: 1.6; margin: 12px 4px 0;
+}
+.figure-caption b { color: #1b1b1b; font-weight: 700; }
+.figure-caption .note { display: block; margin-top: 7px; font-size: 15px; color: #888; }
+.figure-caption sup { font-size: .7em; }
+
+.teaser { margin-top: 18px; padding: 0 10px; }
+.teaser img { width: 100%; height: auto; }
+.teaser .figure-caption { text-align: center; max-width: 80ch; margin-left: auto; margin-right: auto; }
+
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; align-items: start; }
+@media (max-width: 760px) { .grid2 { grid-template-columns: 1fr; } }
+
+/* Equal-height paired figures so the two plots line up */
+.figs-pair figure { display: flex; flex-direction: column; }
+.figs-pair figure img { height: 360px; object-fit: contain; box-sizing: border-box; }
+@media (max-width: 760px) { .figs-pair figure img { height: auto; } }
+
+/* ---------- CONTRIBUTIONS ---------- */
+.contributions { list-style: none; margin: 8px 0 0; padding: 0; }
+.contributions li {
+  font-family: 'Google Sans', 'Noto Sans', sans-serif;
+  font-size: 18px; line-height: 1.6; padding: 13px 0 13px 44px; position: relative;
+  border-top: 1px solid #e6dfce;
+}
+.contributions li:last-child { border-bottom: 1px solid #e6dfce; }
+.contributions li::before {
+  counter-increment: c; content: counter(c);
+  position: absolute; left: 0; top: 14px;
+  font-family: 'Google Sans', 'Noto Sans', sans-serif; font-size: 16px; font-weight: 700;
+  background: #1b1b1b; color: #fdfaf4; width: 31px; height: 31px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+}
+.contributions { counter-reset: c; }
+
+/* ---------- TABLE ---------- */
+.tbl-scroll { overflow-x: auto; margin: 8px 0 6px; border-radius: 12px; box-shadow: 0 4px 14px rgba(0,0,0,.10); }
+table.data {
+  border-collapse: collapse; width: 100%; background: #fffdf8;
+  font-family: 'Google Sans', 'Noto Sans', sans-serif; font-size: 17px; font-variant-numeric: tabular-nums;
+}
+table.data th, table.data td { padding: 13px 19px; text-align: center; border-bottom: 1px solid #ece5d4; white-space: nowrap; }
+table.data thead th { background: #1b1b1b; color: #fdfaf4; font-weight: 700; }
+table.data thead .hsub { font-weight: 400; font-size: 13.5px; color: #c9c3b3; }
+table.data td:first-child, table.data th:first-child { text-align: left; }
+table.data tbody tr:last-child td { border-bottom: none; }
+table.data td.col-ours, table.data th.col-ours { background: rgba(27, 27, 27, .06); }
+table.data thead th.col-ours { background: #000; }
+table.data .best { font-weight: 700; color: #000; }
+.tbl-note { font-family: 'Google Sans', 'Noto Sans', sans-serif; font-size: 15px; color: #666; margin: 12px 4px 0; line-height: 1.6; }
+.tbl-note b { color: #1b1b1b; }
+
+/* ---------- VIDEO GRID (static, no carousel) ---------- */
+.video-grid { display: flex; flex-wrap: wrap; gap: 18px; justify-content: center; margin: 12px 0 30px; }
+.gallery-item { flex: 0 1 calc(33.333% - 12px); min-width: 240px; }
+.gallery-item video, .gallery-item img.poster {
+  width: 100%; height: auto; aspect-ratio: 16 / 10; object-fit: cover;
+  border-radius: 15px; box-shadow: 0 4px 12px rgba(0,0,0,.15); background: #fdfaf4; display: block;
+}
+.gallery-item .gcap {
+  font-family: 'Google Sans', 'Noto Sans', sans-serif; font-size: 15px; color: #555;
+  text-align: center; margin-top: 11px;
+}
+
+@media (max-width: 720px) { .gallery-item { flex: 0 1 calc(50% - 9px); } }
+@media (max-width: 440px) { .gallery-item { flex: 0 1 100%; } }
+
+/* ---------- BIBTEX ---------- */
+.bibtex-code {
+  background: #f4efe4; color: #2c2c2c; border: 1px solid #e6dfce; padding: 22px; border-radius: 8px;
+  max-width: 1180px; margin: 22px auto 0; font-size: 16px; box-sizing: border-box;
+}
+.bibtex-head { display: flex; align-items: center; justify-content: space-between; margin: 0 0 12px; gap: 12px; }
+.bibtex-title { font-family: 'Google Sans', 'Noto Sans', sans-serif; font-weight: 700; font-size: 1.1em; color: #1b1b1b; margin: 0; }
+.bibtex-code pre { white-space: pre-wrap; overflow-wrap: break-word; margin: 0; }
+.bibtex-code code { font-family: 'Google Sans', 'Noto Sans', sans-serif; overflow-wrap: break-word; line-height: 1.55; }
+.copy-btn {
+  font-family: 'Google Sans', 'Noto Sans', sans-serif; font-size: 15px; font-weight: 700; cursor: pointer;
+  background: #1b1b1b; color: #fdfaf4; border: none; border-radius: 5px; padding: 6px 12px;
+}
+.copy-btn:hover { background: #333; }
+
+/* ---------- FOOTER ---------- */
+.footer {
+  font-family: 'Google Sans', 'Noto Sans', sans-serif; font-size: 16px; color: #666;
+  margin: 80px 0 0; border-top: 1px solid #ccc; padding: 30px; text-align: center; line-height: 1.8;
+}
+
+@media (max-width: 640px) {
+  .hero-text { font-size: 44px; }
+  .sub-hero-text { font-size: 21px; }
+  .quick-links a, .quick-links span { font-size: 15px; padding: 8px 16px; }
+}
