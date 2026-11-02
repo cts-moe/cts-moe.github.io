@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>CTS-MoE</title>
-<meta name="description" content="CTS-MoE: a perceptive multi-task RL framework combining a dense mixture-of-experts actor with a sparse multi-critic in a concurrent teacher-student paradigm for legged locomotion over discontinuous terrain." />
-<meta property="og:title" content="CTS-MoE: Implicit Policy Adaptation Enables Perceptive Locomotion on Discontinuous Terrain" />
-<meta property="og:description" content="A dense mixture-of-experts actor with a sparse multi-critic, trained end-to-end in a concurrent teacher-student paradigm, enabling implicit terrain adaptation on a Unitree Go1." />
+<title>CTS-MoE: Keeping Jerk in Check</title>
+<meta name="description" content="CTS-MoE jointly trains a perception-gated mixture-of-experts actor with task-specific critics for smooth terrain transitions in legged locomotion, with no terrain label, selector, or distillation stage at deployment." />
+<meta property="og:title" content="Keeping Jerk in Check: Jointly Trained Perception-Gated Experts for Smooth Terrain Transitions" />
+<meta property="og:description" content="CTS-MoE raises connected-course success to 93.3% from 73.3% and 53.3%, lowers mean action jerk by about a third, and avoids the switching transient of hard selection, deployed on a Unitree Go1." />
 <meta property="og:type" content="website" />
 <meta property="og:image" content="assets/img/fig1_main_image.png" />
 <link rel="stylesheet" href="style.css" />
@@ -17,7 +17,8 @@
 
   <!-- ===== HERO ===== -->
   <header class="hero">
-    <h1 class="hero-text">CTS-MoE: Implicit Terrain Adaptation via <br>Mixture-of-Experts for Perceptive Locomotion</h1>
+    <span class="hero-kicker">CTS-MoE</span>
+    <h1 class="hero-text">Keeping Jerk in Check: Jointly Trained Perception-Gated Experts for Smooth Terrain Transitions</h1>
 
     <div class="authors">
       <div class="names">
@@ -33,9 +34,9 @@
     </div>
 
     <div class="quick-links">
-      <a href="https://arxiv.org/pdf/2606.19633v1" target="_blank" rel="noopener">
+      <a href="https://arxiv.org/pdf/2606.19633" target="_blank" rel="noopener">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Paper</a>
-      <a href="https://arxiv.org/abs/2606.19633v1" target="_blank" rel="noopener">
+      <a href="https://arxiv.org/abs/2606.19633" target="_blank" rel="noopener">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>arXiv</a>
       <a href="https://x.com/faffonso2/status/2068022032915173461" target="_blank" rel="noopener">
         <svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>Thread</a>
@@ -55,7 +56,7 @@
     <!-- ===== ABSTRACT ===== -->
     <span class="section-subtitle">Abstract</span>
     <div class="section">
-      <p>Perceptive legged locomotion over discontinuous terrain (e.g., stairs, gaps, and obstacles) requires adaptive behavior, as a single conservative gait cannot produce the anticipatory maneuvers needed for abrupt topology changes. Cast as <b>multi-task reinforcement learning</b>, this problem introduces a tension between <b>sharing and separation</b>. Tasks use a common locomotion base but have conflicting rewards, so a policy must share behavior while avoiding value interference. Prior work addresses only one side, with monolithic policies sacrificing specialization and hierarchical sub-policies sacrificing generalization across transitions and unseen terrain. We propose <b>CTS-MoE</b>, which combines a dense <b>mixture-of-experts</b> actor with perception-based gating to compose shared behaviors and a <b>multi-critic</b> with task-specific value heads to prevent interference. The model is trained end-to-end in a single-stage concurrent teacher-student setup that handles partial observability and avoids sequential distillation, with task labels used only during training. At deployment, routing depends solely on perception, allowing <b>implicit terrain adaptationwithout a high-level selector or terrain classifier.</b>  Experiments on a Unitree Go1 in simulation and on hardware across seen and unseen terrains show task-aware specialization, with lower tracking error and higher success rates than monolithic baselines.</p>
+      <p>Perceptive legged locomotion across discontinuous terrain requires shared locomotion knowledge, task-specific maneuvers, and <b>smooth transitions</b> between them. Existing approaches train specialized policies independently and either switch among them with a hierarchical selector or distill them into a monolithic policy. Both fix the constituent behaviors before deployment, and both are assessed through aggregate course outcomes that leave behavior at terrain boundaries uncharacterized. We instead formulate multi-terrain locomotion as <b>multi-task reinforcement learning</b> and <b>jointly train</b> a perception-gated dense <b>mixture-of-experts</b> actor with <b>task-specific critics</b>: soft routing composes expert knowledge into continuously varying behavior, while separated critics isolate heterogeneous objectives so that specialization survives joint optimization. A concurrent teacher&ndash;student formulation transfers this composition from privileged terrain information to onboard depth, so that at deployment routing is inferred from perception alone, with <b>no terrain label, selector, or distillation stage</b>. Against hierarchical and DAgger-distilled baselines, the policy raises connected-course success to <b>93.3%</b> from 73.3% and 53.3%, lowers mean action jerk by <b>about a third</b> across the course, and avoids the switching transient that hard selection introduces at boundaries. On a Unitree Go1, it completes an extended outdoor course in 10 of 10 trials and transfers to four outdoor terrain types.</p>
     </div>
 
     <!-- ===== METHOD ===== -->
@@ -63,14 +64,14 @@
 
     <figure>
       <img class="diagram" src="assets/img/fig2_main_diagram.png" alt="CTS-MoE architecture: teacher and student encoders, MoE actor with router, and multi-critic." />
-      <p class="figure-caption"><b>Overview of CTS-MoE.</b> A <b>single-stage</b> framework that <b>jointly trains</b> the privileged <b>teacher</b> and the deployable <b>student</b>, extending CTS<sup>&dagger;</sup> to the perceptive MTRL setting. After each update a supervised <b>distillation</b> aligns the student latent to the teacher's, removing the mismatch of sequential distillation. Both branches feed one policy trained with a multi-reward formulation (a task-specific reward per terrain), realized by a <b>dense mixture-of-experts actor</b>, whose perception-conditioned router soft-weights and composes expert actions, and a <b>sparse multi-critic</b> that isolates per-task value signals to stabilize PPO. Routing on perception rather than task labels makes terrain adaptation implicit, with no high-level selector or terrain classification at deployment.<span class="note">&dagger; CTS: <a href="https://arxiv.org/abs/2405.10830" target="_blank" rel="noopener">Concurrent Teacher-Student Reinforcement Learning for Legged Locomotion</a> (Wang et al., 2024).</span></p>
+      <p class="figure-caption"><b>Overview of CTS-MoE.</b> <b>Teacher</b> and <b>student</b> groups are trained concurrently, extending CTS<sup>&dagger;</sup> to perceptive multi-terrain locomotion. Privileged information is encoded by the teacher, while the teacher latent is regressed by the student encoder from deployable observations. A shared <b>mixture-of-experts actor</b>, whose router composes the experts, is driven by both groups, and per-task values are provided by <b>task-specific critics</b> to stabilize PPO. At deployment, routing is inferred from perception alone.<span class="note">&dagger; CTS: <a href="https://arxiv.org/abs/2405.10830" target="_blank" rel="noopener">Concurrent Teacher-Student Reinforcement Learning for Legged Locomotion</a> (Wang et al., 2024).</span></p>
     </figure>
 
     <span class="mini-label">Contributions</span>
     <ol class="contributions">
-      <li>A concurrent teacher-student framework that extends asymmetric distillation to the perceptive MTRL setting, jointly training the representation and expert policies.</li>
-      <li>We resolve the sharing–separation tension in multi-reward RL asymmetrically, a dense MoE actor composes shared behaviors, while task-specific value heads prevent reward interference.</li>
-      <li>A demonstration that perception-conditioned routing enables implicit policy adaptation, yielding task-aware specialization without explicit task labels.</li>
+      <li>An asymmetric multi-task formulation in which task-specific rewards and critics isolate heterogeneous returns, so a single shared actor learns specialized behaviors jointly.</li>
+      <li>A perception-conditioned MoE router, transferred to onboard depth, that composes these behaviors without a terrain label, selector, or distillation stage.</li>
+      <li>A transition-centric evaluation against hierarchical and distilled baselines retrained under a matched protocol, measuring success on a connected course with held-out segments and switch-aligned action jerk, followed by hardware deployment on a Unitree Go1.</li>
     </ol>
 
     <!-- ===== VIDEOS ===== -->
@@ -99,6 +100,10 @@
       </div>
     </div>
 
+    <div class="section">
+      <p>The policy was evaluated outdoors on terrains resembling the simulated ones, with 10 trials per terrain. Success was achieved in 100% of climb-down and slope trials, 80% of stair descents, and 70% of climb-ups. It also completed <b>all 10 trials</b> on an extended course combining rough terrain with 12&ndash;18&nbsp;cm climb-up and climb-down obstacles.</p>
+    </div>
+
     <span class="section-subtitle" id="videos">Simulation</span>
 
     <div class="video-grid">
@@ -125,54 +130,147 @@
     </div>
 
 
-    <!-- ===== SIMULATION RESULTS ===== -->
-    <span class="section-subtitle">Simulation Results</span>
+    <!-- ===== BASELINES ===== -->
+    <span class="section-subtitle" id="baselines">Baselines</span>
     <div class="section">
-      <p>CTS-MoE outperforms the perceptive baselines, with the largest gains on terrains that demand anticipatory behavior &mdash; success rate increases by <b>29.3 percentage points</b> on gaps and <b>10.3 percentage points</b> on climb-up over the prior perceptive baseline. The MoE actor yields <i>no</i> improvement for the blind baseline, confirming that the gains come from the multi-task formulation enabling perception-conditioned specialization, not from representation learning alone.</p>
+      <p>Published results confound architecture with rewards, observations, terrains, and compute, so each method's defining architecture is retrained with our rewards and common protocol.</p>
+    </div>
+    <dl class="baselines">
+      <div class="baseline-key">
+        <dt>Hierarchical (Oracle)<span class="baseline-src">Angarola et al. (2025), Wu et al. (2025)</span></dt>
+        <dd>Terrain specialists selected by the true terrain index at training and inference. It is the only baseline that reads this index. On unseen terrain, which has no specialist, the flat specialist is used, as it performed best there.</dd>
+      </div>
+      <div class="baseline-key">
+        <dt>Distilled<span class="baseline-src">Zhuang et al. (2023)</span></dt>
+        <dd>The same specialists distilled into one policy with DAgger.</dd>
+      </div>
+      <div>
+        <dt>Perceptive-Single<span class="baseline-src">Agarwal et al. (2023)</span></dt>
+        <dd>Depth and proprioception, with a single actor.</dd>
+      </div>
+      <div>
+        <dt>Blind-MoE<span class="baseline-src">Huang et al. (2025)</span></dt>
+        <dd>Proprioception only, with our MoE actor.</dd>
+      </div>
+      <div>
+        <dt>Blind-Single<span class="baseline-src">Wang et al. (2024)</span></dt>
+        <dd>Proprioception only, with a single actor.</dd>
+      </div>
+    </dl>
+
+    <!-- ===== LONG-TRACK ===== -->
+    <span class="section-subtitle" id="long-track">Long-Track Results</span>
+    <div class="section">
+      <p>A connected course tests whether joint training pays off during transitions. It concatenates the six training terrains with two held-out segments, rough ground and a slope ascent/descent pair, so composition is tested partly outside the trained task set. Over 15 trials at 0.5&nbsp;m/s with a pure-pursuit controller, success requires completing every segment.</p>
     </div>
 
-    <span class="mini-label">Success rate over terrain (%)</span>
+    <div class="stat-row">
+      <div class="stat stat-ours"><span class="stat-value">14/15</span><span class="stat-pct">93.3%</span><span class="stat-name">CTS-MoE (ours)</span></div>
+      <div class="stat"><span class="stat-value">11/15</span><span class="stat-pct">73.3%</span><span class="stat-name">Hierarchical (oracle)</span></div>
+      <div class="stat"><span class="stat-value">8/15</span><span class="stat-pct">53.3%</span><span class="stat-name">Distilled</span></div>
+    </div>
+
+    <figure>
+      <img class="diagram" src="assets/img/fig_long_track_summary.png" alt="Connected course map above the router weights of our policy and the action jerk of all three policies along the 70 m track, with terrain boundaries aligned." />
+      <p class="figure-caption"><b>Connected-course evaluation.</b> The multi-terrain map, the perception-conditioned router weights of our policy, and the action jerk along the same track, from top to bottom, with terrain boundaries aligned across the routing and jerk traces.</p>
+    </figure>
+
+    <!-- ===== ACTION JERK ===== -->
+    <span class="section-subtitle" id="jerk">Action Jerk</span>
+    <div class="section">
+      <p>Hard selection introduces a transient at terrain boundaries; continuous composition avoids it. We measure action jerk with a third-order backward finite difference. CTS-MoE has the lowest jerk across the course, near terrain switches, and at the peak around a switch, where the gap is widest.</p>
+    </div>
+
+    <div class="jerk-legend" aria-hidden="true">
+      <span><i class="swatch ours"></i>CTS-MoE (ours)</span>
+      <span><i class="swatch hier"></i>Hierarchical</span>
+      <span><i class="swatch dist"></i>Distilled</span>
+      <span class="jerk-unit">Action jerk, &times;10<sup>3</sup> rad/s<sup>3</sup> &middot; simulation, lower is better</span>
+    </div>
+    <div class="jerk-panels">
+      <div class="jerk-panel jerk-panel-key">
+        <h3>Peak around a switch</h3>
+        <div class="jbar" title="CTS-MoE (ours): 0.89 ×10³ rad/s³"><span class="jname">Ours</span><span class="jtrack"><span class="jfill ours" style="width:41.6%"></span></span><span class="jval">0.89</span></div>
+        <div class="jbar" title="Hierarchical: 2.14 ×10³ rad/s³"><span class="jname">Hier.</span><span class="jtrack"><span class="jfill hier" style="width:100%"></span></span><span class="jval">2.14</span></div>
+        <div class="jbar" title="Distilled: 1.49 ×10³ rad/s³"><span class="jname">Dist.</span><span class="jtrack"><span class="jfill dist" style="width:69.6%"></span></span><span class="jval">1.49</span></div>
+        <p class="jdelta"><b>58%</b> below hierarchical, <b>40%</b> below distilled</p>
+      </div>
+      <div class="jerk-panel">
+        <h3>Mean within &plusmn;2&nbsp;s of a switch</h3>
+        <div class="jbar" title="CTS-MoE (ours): 0.73 ×10³ rad/s³"><span class="jname">Ours</span><span class="jtrack"><span class="jfill ours" style="width:34.1%"></span></span><span class="jval">0.73</span></div>
+        <div class="jbar" title="Hierarchical: 1.21 ×10³ rad/s³"><span class="jname">Hier.</span><span class="jtrack"><span class="jfill hier" style="width:56.5%"></span></span><span class="jval">1.21</span></div>
+        <div class="jbar" title="Distilled: 1.11 ×10³ rad/s³"><span class="jname">Dist.</span><span class="jtrack"><span class="jfill dist" style="width:51.9%"></span></span><span class="jval">1.11</span></div>
+        <p class="jdelta"><b>40%</b> below hierarchical, <b>34%</b> below distilled</p>
+      </div>
+      <div class="jerk-panel">
+        <h3>Mean across the course</h3>
+        <div class="jbar" title="CTS-MoE (ours): 0.78 ×10³ rad/s³"><span class="jname">Ours</span><span class="jtrack"><span class="jfill ours" style="width:36.4%"></span></span><span class="jval">0.78</span></div>
+        <div class="jbar" title="Hierarchical: 1.15 ×10³ rad/s³"><span class="jname">Hier.</span><span class="jtrack"><span class="jfill hier" style="width:53.7%"></span></span><span class="jval">1.15</span></div>
+        <div class="jbar" title="Distilled: 1.18 ×10³ rad/s³"><span class="jname">Dist.</span><span class="jtrack"><span class="jfill dist" style="width:55.1%"></span></span><span class="jval">1.18</span></div>
+        <p class="jdelta"><b>32%</b> below hierarchical, <b>34%</b> below distilled</p>
+      </div>
+    </div>
+
+    <div class="grid2">
+      <figure>
+        <img class="diagram" src="assets/img/fig_jerk_sim.png" alt="Simulation: action jerk over time aligned to terrain switches. Hierarchical peaks at 2.14 just after the switch; ours stays below 1." />
+        <p class="figure-caption"><b>Simulation, aligned to terrain switches.</b> Jerk averaged over all terrain switches of the connected course. The hierarchical policy shows a switching transient right after the boundary; ours does not.</p>
+      </figure>
+      <figure>
+        <img class="diagram" src="assets/img/fig_jerk_hardware.png" alt="Hardware: action jerk aligned to each policy's five largest peaks. Distilled peaks at 3.34, roughly twice ours." />
+        <p class="figure-caption"><b>Hardware, aligned to the five largest jerk peaks.</b> Jerk averaged over each policy's five largest peaks, as ground-truth positions are unavailable to align transitions. The distilled policy peaks at 3.34&times;10<sup>3</sup>&nbsp;rad/s<sup>3</sup>, roughly twice ours.</p>
+      </figure>
+    </div>
+
+    <!-- ===== SUCCESS RATE ===== -->
+    <span class="section-subtitle" id="success">Success Rate by Terrain</span>
+    <div class="section">
+      <p>Among deployable policies, CTS-MoE attains the best or tied success on every terrain. On <b>unseen discrete terrain</b> it reaches <b>73.3%</b>, above 53.3% for the best deployable baseline, 20.0% for the hierarchical oracle, and 11.1% for the distilled policy. The mixture only helps with perception: over the six training terrains it is detrimental for blind policies (77.8% vs 83.0%) and beneficial for perceptive ones (96.3% vs 88.5%).</p>
+    </div>
+
     <div class="tbl-scroll">
       <table class="data">
         <thead>
           <tr>
             <th>Terrain</th>
             <th class="col-ours">CTS-MoE<br><span class="hsub">Ours</span></th>
-            <th>Ego-Vision<br><span class="hsub">Agarwal et al. (2023)</span></th>
-            <th>MoE-Loco<br><span class="hsub">Huang et al. (2025)</span></th>
-            <th>CTS<br><span class="hsub">Wang et al. (2024)</span></th>
+            <th>Perceptive-Single</th>
+            <th>Blind-MoE</th>
+            <th>Blind-Single</th>
+            <th>Hierarchical (Oracle)</th>
+            <th>Distilled</th>
           </tr>
         </thead>
         <tbody>
-          <tr><td>Flat</td><td class="best col-ours">100.0</td><td class="best">100.0</td><td class="best">100.0</td><td>99.7</td></tr>
-          <tr><td>Ascend</td><td class="best col-ours">97.0</td><td>93.3</td><td>71.3</td><td>85.0</td></tr>
-          <tr><td>Descend</td><td class="best col-ours">100.0</td><td class="best">100.0</td><td>99.7</td><td class="best">100.0</td></tr>
-          <tr><td>Gaps</td><td class="best col-ours">98.3</td><td>69.0</td><td>40.0</td><td>40.3</td></tr>
-          <tr><td>Climb-Up</td><td class="best col-ours">87.0</td><td>76.7</td><td>63.3</td><td>78.0</td></tr>
-          <tr><td>Climb-Down</td><td class="best col-ours">99.7</td><td>96.3</td><td>96.0</td><td>98.0</td></tr>
+          <tr><td>Flat</td><td class="best col-ours">100.0</td><td class="best">100.0</td><td class="best">100.0</td><td>97.8</td><td class="best">100.0</td><td class="best">100.0</td></tr>
+          <tr><td>Ascend</td><td class="col-ours">95.6</td><td>91.1</td><td>71.1</td><td>84.4</td><td class="best">100.0</td><td>93.3</td></tr>
+          <tr><td>Descend</td><td class="best col-ours">100.0</td><td class="best">100.0</td><td>97.8</td><td class="best">100.0</td><td class="best">100.0</td><td class="best">100.0</td></tr>
+          <tr><td>Gap</td><td class="best col-ours">97.8</td><td>68.9</td><td>40.0</td><td>40.0</td><td class="best">97.8</td><td>93.3</td></tr>
+          <tr><td>Climb-Up</td><td class="best col-ours">86.7</td><td>75.6</td><td>62.2</td><td>77.8</td><td>80.0</td><td>64.4</td></tr>
+          <tr><td>Climb-Down</td><td class="best col-ours">97.8</td><td>95.6</td><td>95.6</td><td class="best">97.8</td><td>84.4</td><td>84.4</td></tr>
+          <tr class="row-avg"><td>Training average</td><td class="best col-ours">96.3</td><td>88.5</td><td>77.8</td><td>83.0</td><td>93.7</td><td>89.2</td></tr>
+          <tr class="row-unseen"><td>Discrete<sup>*</sup></td><td class="best col-ours">73.3</td><td>37.8</td><td>40.0</td><td>53.3</td><td>20.0</td><td>11.1</td></tr>
+          <tr><td>Rough<sup>*</sup></td><td class="best col-ours">100.0</td><td class="best">100.0</td><td class="best">100.0</td><td class="best">100.0</td><td class="best">100.0</td><td class="best">100.0</td></tr>
         </tbody>
       </table>
     </div>
-    <p class="tbl-note">Baselines are <b>adapted versions</b> of prior methods, each re-implemented within our pipeline with the MTRL structure to provide a fair comparison.</p>
+    <p class="tbl-note">Success rate (%) over 45 episodes per terrain, at forward commands of 0.5, 0.75, and 1.0&nbsp;m/s. <sup>*</sup>Unseen during training.</p>
 
-    <span class="mini-label">Expert specialization</span>
+    <!-- ===== EXPERT COMPOSITION ===== -->
+    <span class="section-subtitle" id="experts">Expert Composition</span>
     <div class="section">
-      <p>The MoE actor achieves task-aware specialization, individual experts capture complementary, terrain-specific control strategies and the framework composes them implicitly without relying on explicit task identification. Moreover, since all experts optimize the same global objective of velocity tracking, their behaviors diverge only subtly across terrains, resulting in gradual changes that reflect implicit adaptation rather than sparse switching.</p>
+      <p>Each terrain exhibits a distinct but overlapping expert pattern, suggesting that terrain-dependent behavior emerges through compositions of shared experts rather than a one-to-one assignment. Off-diagonal cosine similarities range from 0.48 to 0.73, indicating shared action structure alongside substantial differences. Behavior is carried by the learned routing: replacing the router outputs with uniform weights at inference drops success to <b>2.2%</b>.</p>
     </div>
     <div class="grid2 figs-pair">
       <figure>
-        <img class="diagram" src="assets/img/fig3a_expert_signature.png" alt="Expert usage patterns across terrain tasks." />
-        <p class="figure-caption"><b>Expert usage patterns</b> across the different terrain tasks.</p>
+        <img class="diagram" src="assets/img/fig_expert_signature.png" alt="Radar plots of terrain-relative expert usage for rough, ascend, descend, cross gap, climb up, and climb down." />
+        <p class="figure-caption"><b>Terrain-relative expert usage.</b> Average routing weight of each expert on each terrain, relative to its mean usage across terrains.</p>
       </figure>
       <figure>
-        <img class="diagram" src="assets/img/fig3b_cosine.png" alt="Pairwise cosine similarity between expert action outputs." />
-        <p class="figure-caption"><b>Pairwise cosine similarity</b> between the experts' output actions.</p>
+        <img class="diagram" src="assets/img/fig_expert_cosine.png" alt="Pairwise cosine similarity between expert mean actions, from 0.48 to 0.73 off the diagonal." />
+        <p class="figure-caption"><b>Pairwise expert cosine similarity</b> between the experts' mean actions.</p>
       </figure>
     </div>
-    <figure>
-      <img class="diagram" src="assets/img/fig4_long_track.png" alt="Per-expert router weights along the long evaluation course." />
-      <p class="figure-caption"><b>Temporal evolution of expert usage</b> along a long course mixing seen and unseen terrain. Expert selection varies smoothly with terrain and time &mdash; no discrete switching as in hierarchical approaches.</p>
-    </figure>
 
     <!-- ===== BIBTEX ===== -->
     <span class="section-subtitle">BibTeX</span>
