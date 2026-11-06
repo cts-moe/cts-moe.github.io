@@ -63,7 +63,7 @@
     <!-- ===== ABSTRACT ===== -->
     <span class="section-subtitle">Abstract</span>
     <div class="section">
-      <p>Perceptive legged locomotion across discontinuous terrain requires shared locomotion knowledge, task-specific maneuvers, and <b>smooth transitions</b> between them. Existing approaches train specialized policies independently and either switch among them with a hierarchical selector or distill them into a monolithic policy. Both fix the constituent behaviors before deployment, and both are assessed through aggregate course outcomes that leave behavior at terrain boundaries uncharacterized. We instead formulate multi-terrain locomotion as <b>multi-task reinforcement learning</b> and <b>jointly train</b> a perception-gated dense <b>mixture-of-experts</b> actor with <b>task-specific critics</b>: soft routing composes expert knowledge into continuously varying behavior, while separated critics isolate heterogeneous objectives so that specialization survives joint optimization. A concurrent teacher&ndash;student formulation transfers this composition from privileged terrain information to onboard depth, so that at deployment routing is inferred from perception alone, with <b>no terrain label, selector, or distillation stage</b>. Against hierarchical and DAgger-distilled baselines, the policy raises connected-course success to <b>93.3%</b> from 73.3% and 53.3%, lowers mean action jerk by <b>about a third</b> across the course, and avoids the switching transient that hard selection introduces at boundaries. On a Unitree Go1, it completes an extended outdoor course in 10 of 10 trials and transfers to four outdoor terrain types.</p>
+      <p>Perceptive legged locomotion across discontinuous terrain requires shared locomotion knowledge, task-specific maneuvers, and <b>smooth transitions</b> between them. Existing approaches train specialized policies independently and either switch among them with a hierarchical selector or distill them into a monolithic policy. Both fix the constituent behaviors before they are composed, and both are assessed through aggregate course outcomes that leave behavior at terrain boundaries uncharacterized. We instead propose CTS-MoE, which formulates multi-terrain locomotion as <b>multi-task reinforcement learning</b> and <b>jointly trains</b> a perception-gated dense <b>mixture-of-experts</b> actor with <b>task-specific critics</b>: soft routing composes expert knowledge into continuously varying behavior, while separated critics isolate heterogeneous objectives so that specialization survives joint optimization. A concurrent teacher&ndash;student formulation transfers this composition from privileged terrain information to onboard depth, so that at deployment routing is inferred from perception alone, with <b>no terrain label, selector, or distillation stage</b>. Against hierarchical and DAgger-distilled baselines, the policy raises connected-course success to <b>93.3%</b> from 73.3% and 53.3%, lowers mean action jerk by <b>about a third</b> across the course, and avoids the switching transient that hard selection introduces at boundaries. On a Unitree Go1, it completes an extended outdoor course in 10 of 10 trials and transfers to four outdoor terrain types.</p>
     </div>
 
     <!-- ===== METHOD ===== -->
@@ -224,8 +224,8 @@
         <p class="figure-caption"><b>Simulation, aligned to terrain switches.</b> Jerk averaged over all terrain switches of the connected course. The hierarchical policy shows a switching transient right after the boundary; ours does not.</p>
       </figure>
       <figure>
-        <img class="diagram" src="assets/img/fig_jerk_hardware.png" alt="Hardware: action jerk aligned to each policy's five largest peaks. Distilled peaks at 3.34, roughly twice ours." />
-        <p class="figure-caption"><b>Hardware, aligned to the five largest jerk peaks.</b> Jerk averaged over each policy's five largest peaks, as ground-truth positions are unavailable to align transitions. The distilled policy peaks at 3.34&times;10<sup>3</sup>&nbsp;rad/s<sup>3</sup>, roughly twice ours.</p>
+        <img class="diagram" src="assets/img/fig_jerk_hardware.png" alt="Hardware: action jerk aligned to each policy's five largest peaks. Distilled peaks at 3.34, about 1.8 times ours at 1.90." />
+        <p class="figure-caption"><b>Hardware, aligned to the five largest jerk peaks.</b> Jerk averaged over each policy's five largest peaks, as ground-truth positions are unavailable to align transitions. The distilled policy peaks at 3.34&times;10<sup>3</sup>&nbsp;rad/s<sup>3</sup>, about 1.8 times ours (1.90&times;10<sup>3</sup>).</p>
       </figure>
     </div>
 
@@ -287,7 +287,7 @@
         <button class="copy-btn" id="copyBib">Copy</button>
       </div>
 <pre><code id="bibText">@misc{affonso2026ctsmoe,
-      title={CTS-MoE: Implicit Terrain Adaptation via Mixture-of-Experts for Perceptive Locomotion}, 
+      title={Keeping Jerk in Check: Jointly Trained Perception-Gated Experts for Smooth Terrain Transitions},
       author={Francisco Affonso and Matheus P. Angarola and Ana Luiza Mineiro and Aditya Potnis and Marcelo Becker and Girish Chowdhary},
       year={2026},
       eprint={2606.19633},
